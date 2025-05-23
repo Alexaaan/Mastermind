@@ -12,4 +12,4 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # ⛔ ICI ça plante
-COPY --from=frontend /app/dist /app/backend/static
+#COPY --from=frontend /app/dist /app/backend/static
