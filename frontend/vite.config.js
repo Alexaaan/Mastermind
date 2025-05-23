@@ -1,10 +1,15 @@
-import { defineConfig } from 'vite';
-import react from '@vitejs/plugin-react';
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
 
 export default defineConfig({
   plugins: [react()],
+  server: {
+    proxy: {
+      '/api': 'http://localhost:8000'
+    }
+  },
   build: {
-    outDir: '../backend/static', // copie le build React directement dans FastAPI
-    emptyOutDir: true,
+    outDir: 'dist', // <-- par défaut, reste dans le dossier frontend
+    emptyOutDir: true
   }
 });

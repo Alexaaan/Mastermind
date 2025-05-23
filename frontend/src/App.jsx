@@ -1,19 +1,27 @@
-import { useEffect, useState } from "react";
+import { useState, useEffect } from 'react'
+import GuessForm from './components/GuessForm.jsx'
+import History from './components/History.jsx'
 
-function App() {
-  const [message, setMessage] = useState("Loading...");
+export default function App() {
+  const [attempts, setAttempts] = useState([])
+  const [message, setMessage] = useState('')
 
   useEffect(() => {
-    fetch("/api/hello")
+    fetch('ht /api/start')
       .then(res => res.json())
-      .then(data => setMessage(data.message));
-  }, []);
+      .then(data => setMessage(data.message))
+  }, [])
+
+  const handleResult = result => {
+    setAttempts(prev => [...prev, result])
+  }
 
   return (
-    <div style={{ textAlign: "center", marginTop: "50px" }}>
-      <h1>{message}</h1>
+    <div style={{ padding: 20, fontFamily: 'sans-serif' }}>
+      <h1>Masterminder</h1>
+      <p>{message}</p>
+      <GuessForm onResult={handleResult} />
+      <History attempts={attempts} />
     </div>
-  );
+  )
 }
-
-export default App;
