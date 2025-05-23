@@ -10,6 +10,7 @@ WORKDIR /app
 COPY backend/ /app/backend
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
+CMD ["uvicorn", "backend.app:app", "--host", "0.0.0.0", "--port", "8000"]
 
 # ⛔ ICI ça plante
 #COPY --from=frontend /app/dist /app/backend/static
