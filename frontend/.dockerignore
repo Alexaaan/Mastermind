@@ -1,0 +1,3 @@
+# Mauvais exemple – à NE PAS avoir :
+frontend/
+!frontend/package.json
