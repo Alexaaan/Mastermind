@@ -1,29 +1,29 @@
-#Backend Python (FastAPI)
 from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
+from game.mastermind import generate_code, check_guess
 from fastapi.staticfiles import StaticFiles
-import uvicorn
-from pathlib import Path
 
 app = FastAPI()
 
+class Guess(BaseModel):
+    guess: list[str]
 
+SECRET = generate_code()
 
-# Autorise le front local
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],  # à restreindre plus tard en prod
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+@app.get("/api/start")
+def start_game():
+    global SECRET
+    SECRET = generate_code()
+    return {"message": "new game started"}
+
+@app.post("/api/guess")
+def post_guess(g: Guess):
+    return check_guess(SECRET, g.guess)
+
+# _______________________________
+# Monture des fichiers statiques
+app.mount(
+    "/",
+    StaticFiles(directory="static", html=True),
+    name="static"
 )
-
-@app.get("/api/hello")
-async def hello():
-    return {"message": "Hello from FastAPI"}
-
-# Sert le frontend buildé statiquement (après build React)
-app.mount("/", StaticFiles(directory=Path(__file__).parent / "static", html=True), name="static")
-
-if __name__ == "__main__":
-    uvicorn.run("backend.app:app", host="0.0.0.0", port=8000, reload=True)

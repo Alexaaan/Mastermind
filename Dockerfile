@@ -1,16 +1,21 @@
-# Étape de build frontend
+# Stage frontend
 FROM node:18 AS frontend
 WORKDIR /app
-COPY frontend/ /app/
-RUN npm install && npm run build
+COPY frontend/package*.json ./
+RUN npm install
+COPY frontend/ ./
+RUN npm run build     # génère /app/dist
 
-# Étape finale backend
-FROM python:3.11 AS stage-1
+# Stage backend
+FROM python:3.11-slim
 WORKDIR /app
-COPY backend/ /app/backend
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
-CMD ["uvicorn", "backend.app:app", "--host", "0.0.0.0", "--port", "8000"]
+COPY backend/requirements.txt ./
+RUN pip install -r requirements.txt
+COPY backend/ ./backend
 
-# ⛔ ICI ça plante
-#COPY --from=frontend /app/dist /app/backend/static
+# Ajoute cette ligne pour créer le dossier
+RUN mkdir -p ./backend/static
+
+COPY --from=frontend /app/dist ./backend/static
+EXPOSE 8000
+CMD ["uvicorn","backend.app:app","--host","0.0.0.0","--port","8000"]
